@@ -1,3 +1,19 @@
+/* Engine.js
+ * This file provides the game loop functionality (update entities and render),
+ * draws the initial game board on the screen, and then calls the update and
+ * render methods on your player and enemy objects (defined in your app.js).
+ *
+ * A game engine works by drawing the entire game screen over and over, kind of
+ * like a flipbook you may have created as a kid. When your player moves across
+ * the screen, it may look like just that image/character is moving or being
+ * drawn but that is not the case. What's really happening is the entire "scene"
+ * is being drawn over and over, presenting the illusion of animation.
+ *
+ * This engine is available globally via the Engine variable and it also makes
+ * the canvas' context (ctx) object globally available to make writing app.js
+ * a little simpler to work with.
+ */
+
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
@@ -62,6 +78,7 @@ var Engine = (function(global) {
      * functionality this way (you could just implement collision detection
      * on the entities themselves within your app.js file).
      */
+<<<<<<< HEAD
      function update(dt) {
         if (game.gameOn) {
           updateEntities(dt);
@@ -99,6 +116,25 @@ var Engine = (function(global) {
     //Check for collision between player and the book, and take book.
     if(player.y === book.y && player.x === book.x) {
       book.pickup();
+=======
+    function update(dt) {
+        updateEntities(dt);
+        // checkCollisions();
+    }
+
+    /* This is called by the update function and loops through all of the
+     * objects within your allEnemies array as defined in app.js and calls
+     * their update() methods. It will then call the update function for your
+     * player object. These update methods should focus purely on updating
+     * the data/properties related to the object. Do your drawing in your
+     * render methods.
+     */
+    function updateEntities(dt) {
+        allEnemies.forEach(function(enemy) {
+            enemy.update(dt);
+        });
+        player.update();
+>>>>>>> 3460297... Add main classes
     }
   }
 
@@ -114,15 +150,14 @@ var Engine = (function(global) {
          */
         var rowImages = [
                 'images/water-block.png',   // Top row is water
-                'images/stone-block.png',   // Row 1 of 4 of stone
-                'images/stone-block.png',   // Row 2 of 4 of stone
-                'images/stone-block.png',   // Row 3 of 4 of stone
-                'images/stone-block.png',   // Row 4 of 4 of stone
+                'images/stone-block.png',   // Row 1 of 3 of stone
+                'images/stone-block.png',   // Row 2 of 3 of stone
+                'images/stone-block.png',   // Row 3 of 3 of stone
                 'images/grass-block.png',   // Row 1 of 2 of grass
                 'images/grass-block.png'    // Row 2 of 2 of grass
             ],
             numRows = 6,
-            numCols = 7,
+            numCols = 5,
             row, col;
 
         /* Loop through the number of rows and columns we've defined above
@@ -150,23 +185,29 @@ var Engine = (function(global) {
      * on your enemy and player entities within app.js
      */
     function renderEntities() {
+<<<<<<< HEAD
 
         // Render item only if not picked up (book.visible = true)
         if(book.visible) {
           book.render();
         }
 
+=======
+>>>>>>> 3460297... Add main classes
         /* Loop through all of the objects within the allEnemies array and call
         * the render function you have defined.
         */
         allEnemies.forEach(function(enemy) {
-          enemy.render();
+            enemy.render();
         });
 
         player.render();
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3460297... Add main classes
     /* This function does nothing but it could have been a good place to
      * handle game reset states - maybe a new game menu or a game over screen
      * those sorts of things. It's only called once by the init() method.
