@@ -78,45 +78,6 @@ var Engine = (function(global) {
      * functionality this way (you could just implement collision detection
      * on the entities themselves within your app.js file).
      */
-<<<<<<< HEAD
-     function update(dt) {
-        if (game.gameOn) {
-          updateEntities(dt);
-          checkCollisions();
-          updateScoringRow();
-        }
-      }
-
-    function updateEntities(dt) {
-    allEnemies.forEach(function(enemy) {
-      enemy.update(dt);
-    });
-  }
-
-  // Check collisions
-  function checkCollisions(){
-    /* Check for enemy collision.
-     * Allow for 10 pixel difference in alignment of enemy and player
-     * Y positions on the same row, due to centering of sprites.
-     * Collision occurs when opposite side X coords are within 75 pixels.
-     */
-    allEnemies.forEach(function(enemy) {
-      if(player.y - enemy.y == 10) {
-        if(player.x < enemy.x + 75 && player.x + 75 > enemy.x){
-          game.collideEfx.play();
-          // If the player is carrying an item, drop it.
-          if (player.carryItem) {
-            book.drop();
-          }
-          player.reset();
-        }
-      }
-    });
-
-    //Check for collision between player and the book, and take book.
-    if(player.y === book.y && player.x === book.x) {
-      book.pickup();
-=======
     function update(dt) {
         updateEntities(dt);
         // checkCollisions();
@@ -134,9 +95,7 @@ var Engine = (function(global) {
             enemy.update(dt);
         });
         player.update();
->>>>>>> 3460297... Add main classes
     }
-  }
 
     /* This function initially draws the "game level", it will then call
      * the renderEntities function. Remember, this function is called every
@@ -157,7 +116,7 @@ var Engine = (function(global) {
                 'images/grass-block.png'    // Row 2 of 2 of grass
             ],
             numRows = 6,
-            numCols = 5,
+            numCols = 7,
             row, col;
 
         /* Loop through the number of rows and columns we've defined above
@@ -185,18 +144,9 @@ var Engine = (function(global) {
      * on your enemy and player entities within app.js
      */
     function renderEntities() {
-<<<<<<< HEAD
-
-        // Render item only if not picked up (book.visible = true)
-        if(book.visible) {
-          book.render();
-        }
-
-=======
->>>>>>> 3460297... Add main classes
         /* Loop through all of the objects within the allEnemies array and call
-        * the render function you have defined.
-        */
+         * the render function you have defined.
+         */
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
@@ -204,10 +154,6 @@ var Engine = (function(global) {
         player.render();
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 3460297... Add main classes
     /* This function does nothing but it could have been a good place to
      * handle game reset states - maybe a new game menu or a game over screen
      * those sorts of things. It's only called once by the init() method.
