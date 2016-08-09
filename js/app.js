@@ -57,7 +57,17 @@ Player.prototype.render = function() {
 ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-Player.prototype.handleInput = function() {};
+Player.prototype.handleInput = function(key) {
+    if (key === 'up') {
+        this.y -= 100;
+    } else if (key === 'down') {
+        this.y += 100;
+    } else if (key === 'right') {
+        this.x += 100;
+    } else if (key === 'left') {
+        this.x -= 100;
+    }
+};
 
 var player = new Player();
 
