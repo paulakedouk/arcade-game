@@ -2,8 +2,10 @@
 var Enemy = function(y) {
     this.sprite = 'images/enemy-bug.png';
 
-    this.x = -200;
-    this.y = 100 * y;
+    this.x = -250;
+    if (y == 1) {this.y = 130;}
+    else if (y == 2) {this.y = 210;}
+    else if (y == 3) {this.y = 290;}
 
     this.rate = 101 + Math.floor(Math.random() * 150);
 
@@ -17,11 +19,12 @@ Enemy.prototype.update = function(dt) {
     // all computers.
     this.x = this.x + (dt * this.rate);
 
-    if (this.y < player.y + 101 && this.y + 101 > player.y && this.x < player.x + 171 && this.x + 171 > player.y) {
+    if (this.x < player.x + 80 && player.x < this.x + 80 && this.y < player.y + 70 && player.y < this.y + 70) {
         player.reset();
+        console.log("test");
     }
 
-    if (this.x > 505) {
+    if (this.x > 500) {
         this.x = -100;
     }
 };
@@ -66,14 +69,25 @@ Enemy.prototype.render = function() {
 
 var Player = function() {
     this.sprite = 'images/char-boy.png';
-    this.x = 220;
-    this.y = 400;
-
+    this.x = 200;
+    this.y = 370;
 };
 
 // Update the player's position
 Player.prototype.update = function() {
-
+    if (this.y < 85) {
+        this.y = 130;
+    }
+    if (this.y > 480) {
+        this.y = 450;
+    }
+    if (this.x < 0) {
+        this.x = 0;
+    }
+    if (this.x > 410) {
+        this.x = 400;
+    }
+    console.log(this.x);
 };
 
 //Draw player on the screen
@@ -87,24 +101,22 @@ Player.prototype.handleInput = function(key) {
     } else if (key == 'down') {
         this.y += 80;
     } else if (key == 'right') {
-        this.x += 101;
+        this.x += 100;
     } else if (key == 'left') {
-        this.x -= 101;
+        this.x -= 100;
     }
 };
 
 Player.prototype.reset = function(){
-    // Reset the image
-    this.sprite = 'images/char-boy.png';
-
-    // Set player to start position
-    this.x = 100;
-    this.y = 400;
+    this.x = 200;
+    this.y = 370;
 };
 
 var player = new Player();
 
-var allEnemies = [new Enemy(1), new Enemy(2)];
+var allEnemies = [new Enemy(1), new Enemy(2), new Enemy(3)];
+//var allEnemies = [];
+
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
