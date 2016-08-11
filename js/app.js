@@ -1,3 +1,10 @@
+var Game = function(){
+    this.paused = false;
+    this.gameOn = false;
+
+    this.collideEfx = new Audio('audio/sfx_collide.wav');
+};
+
 // Enemies our player must avoid
 var Enemy = function(y) {
     this.sprite = 'images/enemy-bug.png';
@@ -20,41 +27,20 @@ Enemy.prototype.update = function(dt) {
     this.x = this.x + (dt * this.rate);
 
     if (this.x < player.x + 80 && player.x < this.x + 80 && this.y < player.y + 70 && player.y < this.y + 70) {
+        game.collideEfx.play();
         player.reset();
-        console.log("test");
-    }
-
-    if (this.x > 500) {
-        this.x = -100;
     }
 };
 
-/*Enemy.prototype.collision = function(enemy,player) {
-    var rect1 = Enemy;
-    var rect2 = Player;
-
-    if (rect1.x < rect2.x + rect2.width &&
-       rect1.x + rect1.width > rect2.x &&
-       rect1.y < rect2.y + rect2.height &&
-       rect1.height + rect1.y > rect2.y) {
-        // collision detected!
-    }
-
-    // filling in the values =>
-
-    if (5 < 30 &&
-        55 > 20 &&
-        5 < 20 &&
-        55 > 10) {
-        // collision detected!
-    }
-};*/
+var addEnemies = function() {
+    allEnemies.push(new Enemy(1));
+    allEnemies.push(new Enemy(2));
+    allEnemies.push(new Enemy(3));
+};
 
 // Randomize start location of enemy
 Enemy.prototype.reset = function() {
-    if (this.x == -100) {
-        this.x = this.x + this.rate;
-    }
+  this.x = 0 - Math.random() * 150;
 };
 
 // Draw the enemy on the screen, required method for game
@@ -87,7 +73,6 @@ Player.prototype.update = function() {
     if (this.x > 410) {
         this.x = 400;
     }
-    console.log(this.x);
 };
 
 //Draw player on the screen
@@ -104,8 +89,13 @@ Player.prototype.handleInput = function(key) {
         this.x += 100;
     } else if (key == 'left') {
         this.x -= 100;
-    }
+/*} else if (key == 'pause') {
+        game.togglePause();
+    } else if (key == 'restart') {
+        game.gameReset();*/
+}
 };
+
 
 Player.prototype.reset = function(){
     this.x = 200;
@@ -114,9 +104,14 @@ Player.prototype.reset = function(){
 
 var player = new Player();
 
-var allEnemies = [new Enemy(1), new Enemy(2), new Enemy(3)];
-//var allEnemies = [];
+var allEnemies = [];
 
+var timeoutID;
+timeoutID = window.setInterval(addEnemies, 3000);
+
+addEnemies();
+
+game = new Game();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
@@ -128,5 +123,7 @@ document.addEventListener('keyup', function(e) {
         40: 'down'
     };
 
+    // Pass the values to the handleInput method
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
