@@ -1,5 +1,7 @@
 // GAME CLASS
 
+
+
 // Create the game constructor to to hold functions called against the overall game state
 var Game = function(){
     // Initialize game variables
@@ -7,7 +9,6 @@ var Game = function(){
     this.gameOver = false;
     this.boyHasGirl = false;
 
-    // Global variables
     player = new Player();
     allEnemies = [];
     girl = new Girl();
@@ -20,6 +21,9 @@ var Game = function(){
     this.collideEfx = new Audio('audio/sfx_collide.wav');
     this.girlEfx = new Audio('audio/sfx_cheering.wav');
 };
+
+// Declare the global variables
+var player, allEnemies, girl;
 
 // Push an enemy in each row
 Game.prototype.addEnemies = function() {
@@ -88,24 +92,6 @@ var Player = function() {
 
 // Update the players position
 Player.prototype.update = function() {
-    // Set a position for the player doesn't leave the screen
-    // Top
-    if (this.y < 0) {
-        this.y = 50;
-    }
-    // Bottom
-    if (this.y > 480) {
-        this.y = 450;
-    }
-    // Left
-    if (this.x < 0) {
-        this.x = 0;
-    }
-    // Right
-    if (this.x > 410) {
-        this.x = 400;
-    }
-
     // Get girl collision
     if (this.x < girl.x + 80 && girl.x < this.x + 80 && this.y < girl.y + 70 && girl.y < this.y + 70) {
         this.getGirl();
@@ -159,6 +145,21 @@ Player.prototype.handleInput = function(key) {
         } else if (key == 'left') {
             this.x -= 100;
         }
+    }
+    if (this.y < 0) {
+        this.y = 50;
+    }
+    // Bottom
+    if (this.y > 480) {
+        this.y = 450;
+    }
+    // Left
+    if (this.x < 0) {
+        this.x = 0;
+    }
+    // Right
+    if (this.x > 410) {
+        this.x = 400;
     }
 };
 
