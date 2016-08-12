@@ -53,14 +53,14 @@ Enemy.prototype.update = function(dt) {
 
 
     // Check for collisions with the player and put girl back to her initial position
-    if (!game.gameWin && this.x < player.x + 80 && player.x < this.x + 80 && this.y < player.y + 70 && player.y < this.y + 70) {
+    if (!game.gameWin && !game.gameOver && this.x < player.x + 80 && player.x < this.x + 80 && this.y < player.y + 70 && player.y < this.y + 70) {
         game.collideEfx.play();
         player.reset();
         girl.reset();
+        game.boyHasGirl = false;
 
         // Game over
         game.gameOver = true;
-        alert('Game over! :( Try again.');
     }
 };
 
@@ -113,11 +113,17 @@ Player.prototype.update = function() {
     }
 
     // If the boy has the girl and back to his initial position, the game ends
-    if (this.y >= 370 && game.boyHasGirl === true) {
+    if (this.y >= 370 && game.boyHasGirl) {
         this.sprite = 'images/char-saved.png';
         this.x = 150;
         this.y = 200;
         game.gameWin = true;
+    }
+
+    if (!game.boyHasGirl && game.gameOver) {
+        this.sprite = 'images/char-lost.png';
+        this.x = 150;
+        this.y = 200;
     }
 };
 
@@ -138,6 +144,7 @@ Player.prototype.getGirl = function() {
 
     // When the boy has the girl
     game.boyHasGirl = true;
+
 };
 
 // Handle keyboard input
