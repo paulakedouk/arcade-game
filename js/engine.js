@@ -43,14 +43,14 @@ var Engine = (function(global) {
             dt = (now - lastTime) / 1000.0;
 
         /* Call our update/render functions, pass along the time delta to
-         * our update function since it may be used for smooth animation.
-         */
+        * our update function since it may be used for smooth animation.
+        */
         update(dt);
         render();
 
         /* Set our lastTime variable which is used to determine the time delta
-         * for the next time this function is called.
-         */
+        * for the next time this function is called.
+        */
         lastTime = now;
 
         /* Use the browser's requestAnimationFrame function to call this
@@ -153,7 +153,7 @@ var Engine = (function(global) {
         });
 
         player.render();
-        target.render();
+        girl.render();
     }
 
     /* This function does nothing but it could have been a good place to
@@ -177,7 +177,8 @@ var Engine = (function(global) {
         'images/char-cat-girl.png',
         'images/char-test.png',
         'images/enemy-test.png',
-        'images/char-boy-girl.png'
+        'images/char-boy-girl.png',
+        'images/char-saved.png'
     ]);
     Resources.onReady(init);
 

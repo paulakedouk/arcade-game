@@ -1,48 +1,66 @@
+// GAME CLASS
+
+// Create the game constructor to to hold functions called against the overall game state
 var Game = function(){
+    // Initialize game variables
+    this.gameWin = false;
+    this.gameOver = false;
+    this.boyHasGirl = false;
+
     // Global variables
     player = new Player();
     allEnemies = [];
+    girl = new Girl();
 
-    target = new Target();
-
-    // Add enemies
+    // Add an enemies with interval of 3 seconds
     this.addEnemies();
     setInterval(this.addEnemies, 3000);
 
+    //Preload audio sample
     this.collideEfx = new Audio('audio/sfx_collide.wav');
+    this.girlEfx = new Audio('audio/sfx_cheering.wav');
 };
 
+// Push an enemy in each row
 Game.prototype.addEnemies = function() {
     allEnemies.push(new Enemy(1));
     allEnemies.push(new Enemy(2));
     allEnemies.push(new Enemy(3));
 };
 
-// Enemies our player must avoid
+// ENEMIES CLASS
+
+// Create the enemy constructor
 var Enemy = function(y) {
+    // Set the image for the enemy
     this.sprite = 'images/enemy-bug.png';
 
+    // Set the enemies position
     this.x = -250;
     if (y == 1) {this.y = 130;}
     else if (y == 2) {this.y = 210;}
     else if (y == 3) {this.y = 290;}
 
-    this.rate = 101 + Math.floor(Math.random() * 50);
+    // Set the speed rate for the enemy using a random
+    this.rate = 101 + Math.floor(Math.random() * 150);
 };
 
-// Update the enemy's position, required method for game
+// Update the enemy's position and check for collisions
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
+    // Set the position of the enemy based on dt and the speed rate
     this.x = this.x + (dt * this.rate);
 
-    // Enemy collision;
-    if (this.x < player.x + 80 && player.x < this.x + 80 && this.y < player.y + 70 && player.y < this.y + 70) {
+
+    // Check for collisions with the player and put girl back to her initial position
+    if (!game.gameWin && this.x < player.x + 80 && player.x < this.x + 80 && this.y < player.y + 70 && player.y < this.y + 70) {
         game.collideEfx.play();
         player.reset();
-        target.reset();
+        girl.reset();
+
+        // Game over
+        game.gameOver = true;
+        alert('Game over! :( Try again.');
     }
 };
 
@@ -51,61 +69,59 @@ Enemy.prototype.reset = function() {
   this.x = 0 - Math.random() * 150;
 };
 
-// Draw the enemy on the screen, required method for game
+// Draw the enemy on the screen
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
+// PLAYER CLASS
 
-
+// Create the Player constructor
 var Player = function() {
+
     this.sprite = 'images/char-boy.png';
+
+    // Set the player position
     this.x = 200;
     this.y = 370;
 };
 
-// Update the player's position
+// Update the players position
 Player.prototype.update = function() {
+    // Set a position for the player doesn't leave the screen
+    // Top
     if (this.y < 0) {
         this.y = 50;
     }
+    // Bottom
     if (this.y > 480) {
         this.y = 450;
     }
+    // Left
     if (this.x < 0) {
         this.x = 0;
     }
+    // Right
     if (this.x > 410) {
         this.x = 400;
     }
 
-    //Get girl collision
-    if (this.x < target.x + 80 && target.x < this.x + 80 && this.y < target.y + 70 && target.y < this.y + 70) {
-        player.getGirl();
-        game.collideEfx.play();
+    // Get girl collision
+    if (this.x < girl.x + 80 && girl.x < this.x + 80 && this.y < girl.y + 70 && girl.y < this.y + 70) {
+        this.getGirl();
+        game.girlEfx.play();
+    }
+
+    // If the boy has the girl and back to his initial position, the game ends
+    if (this.y >= 370 && game.boyHasGirl === true) {
+        this.sprite = 'images/char-saved.png';
+        this.x = 150;
+        this.y = 200;
+        game.gameWin = true;
     }
 };
 
-//Draw player on the screen
-Player.prototype.render = function() {
-ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
-Player.prototype.handleInput = function(key) {
-    if (key == 'up') {
-        this.y -= 80;
-    } else if (key == 'down') {
-        this.y += 80;
-    } else if (key == 'right') {
-        this.x += 100;
-    } else if (key == 'left') {
-        this.x -= 100;
-}
-};
-
+// Reset the player to his original position and image
 Player.prototype.reset = function() {
     this.sprite = 'images/char-boy.png';
 
@@ -113,33 +129,67 @@ Player.prototype.reset = function() {
     this.y = 370;
 };
 
+// Set the image when the boy pickup the girl
 Player.prototype.getGirl = function() {
     this.sprite = 'images/char-boy-girl.png';
-    target.y = -100;
+
+    // Set girl position to the outside of the screen
+    girl.y = -100;
+
+    // When the boy has the girl
+    game.boyHasGirl = true;
 };
 
-var Target = function() {
-    this.sprite = 'images/char-cat-girl.png';
-    this.x = 200;
-    this.y = 50;
+// Handle keyboard input
+Player.prototype.handleInput = function(key) {
+    if (!game.gameWin) {
+        if (key == 'up') {
+            this.y -= 80;
+        } else if (key == 'down') {
+            this.y += 80;
+        } else if (key == 'right') {
+            this.x += 100;
+        } else if (key == 'left') {
+            this.x -= 100;
+        }
+    }
 };
 
-//Draw player on the screen
-Target.prototype.render = function() {
+// Draw the player on the screen
+Player.prototype.render = function() {
 ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-Target.prototype.reset = function() {
+// GIRL CLASS
+
+// Create the girl constructor
+var Girl = function() {
+    // Set the image for the girl
+    this.sprite = 'images/char-cat-girl.png';
+
+    // Set the girl position
+    this.x = 200;
+    this.y = 50;
+};
+
+// Reset the girl to her original position and image
+Girl.prototype.reset = function() {
     this.sprite = 'images/char-cat-girl.png';
 
     this.x = 200;
     this.y = 50;
 };
 
+// Draw girl on the screen
+Girl.prototype.render = function() {
+ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+// Instantiate the game
 game = new Game();
 
 // This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
+// Player.handleInput() method.
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
         37: 'left',
