@@ -1,7 +1,5 @@
 // GAME CLASS
 
-
-
 // Create the game constructor to to hold functions called against the overall game state
 var Game = function(){
     // Initialize game variables
@@ -15,21 +13,48 @@ var Game = function(){
 
     // Add an enemies with interval of 3 seconds
     this.addEnemies();
-    setInterval(this.addEnemies, 3000);
+    setInterval(this.addEnemies, 2500);
 
     //Preload audio sample
     this.collideEfx = new Audio('audio/sfx_collide.wav');
     this.girlEfx = new Audio('audio/sfx_cheering.wav');
+    this.sadEfx = new Audio('audio/sfx_sad.wav');
+    this.loveEfx = new Audio('audio/sfx_love.wav');
+
+    this.startTimer();
 };
 
 // Declare the global variables
-var player, allEnemies, girl;
+var player, allEnemies, girl, timer, timerInterval;
+
+Game.prototype.startTimer = function() {
+    timer = 0;
+    timerInterval = setInterval(function(){
+        document.getElementById('timer').innerHTML = 'Time: ' + timer;
+        timer++;
+    }, 100);
+};
+
+Game.prototype.stopTimer = function() {
+    clearInterval(timerInterval);
+};
 
 // Push an enemy in each row
 Game.prototype.addEnemies = function() {
     allEnemies.push(new Enemy(1));
     allEnemies.push(new Enemy(2));
     allEnemies.push(new Enemy(3));
+};
+
+Game.prototype.gameRestart = function() {
+    this.gameWin = false;
+    this.gameOver = false;
+    this.boyHasGirl = false;
+
+    player = new Player();
+    allEnemies = [];
+    girl = new Girl();
+    game.startTimer();
 };
 
 // ENEMIES CLASS
@@ -46,7 +71,7 @@ var Enemy = function(y) {
     else if (y == 3) {this.y = 290;}
 
     // Set the speed rate for the enemy using a random
-    this.rate = 101 + Math.floor(Math.random() * 150);
+    this.rate = 101 + Math.floor(Math.random() * 350);
 };
 
 // Update the enemy's position and check for collisions
@@ -65,6 +90,8 @@ Enemy.prototype.update = function(dt) {
 
         // Game over
         game.gameOver = true;
+        game.stopTimer();
+        game.sadEfx.play();
     }
 };
 
@@ -95,7 +122,6 @@ Player.prototype.update = function() {
     // Get girl collision
     if (this.x < girl.x + 80 && girl.x < this.x + 80 && this.y < girl.y + 70 && girl.y < this.y + 70) {
         this.getGirl();
-        game.girlEfx.play();
     }
 
     // If the boy has the girl and back to his initial position, the game ends
@@ -104,12 +130,15 @@ Player.prototype.update = function() {
         this.x = 150;
         this.y = 200;
         game.gameWin = true;
+        game.stopTimer();
+        game.girlEfx.play();
     }
 
     if (!game.boyHasGirl && game.gameOver) {
         this.sprite = 'images/char-lost.png';
         this.x = 150;
         this.y = 200;
+        game.stopTimer();
     }
 };
 
@@ -130,7 +159,7 @@ Player.prototype.getGirl = function() {
 
     // When the boy has the girl
     game.boyHasGirl = true;
-
+    game.loveEfx.play();
 };
 
 // Handle keyboard input
@@ -145,6 +174,10 @@ Player.prototype.handleInput = function(key) {
         } else if (key == 'left') {
             this.x -= 100;
         }
+    }
+    if ((key == 'enter' && game.gameOver) || (key == 'enter' && game.gameWin)) {
+            game.gameRestart();
+
     }
     if (this.y < 0) {
         this.y = 50;
@@ -200,6 +233,7 @@ game = new Game();
 // Player.handleInput() method.
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
+        13: 'enter',
         37: 'left',
         38: 'up',
         39: 'right',
